@@ -1,29 +1,44 @@
-import { useState } from 'react';
 
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { publicRouter } from './routes';
+import DefaultLayout from './components/Layout/DefaultLayout';
+import { Fragment } from 'react';
 
 function App() {
-    const [job, setJob] = useState('');
-    const [jobs, setJobs] = useState([]);
-
-    const handleSubmit = () => {
-        // setJobs(prev =>{
-        //   return newJobs;
-        // } );
-        // setJob('');
-    };
 
     return (
-        <div className="App">
-            <input value={job} onChange={(e) => setJob(e.target.value)} />
+        <Router>
+            <div className="App">
+                <Routes>
+                    {publicRouter.map((route, index) => {
 
-            <button onClick={handleSubmit}>Add</button>
+                        const Page = route.component
 
-            <ul>
-                {jobs.map((job, index) => (
-                    <li key={index}>{job}</li>
-                ))}
-            </ul>
-        </div>
+                        let Layout = DefaultLayout;
+
+                        if (route.layout) {
+                            Layout = route.layout;
+                        }
+                        else if (route.layout === null) {
+                            Layout = Fragment;
+                        }
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={
+                                    <Layout>
+                                        <Page />
+                                    </Layout>
+                                }
+                            />
+                        )
+                    })}
+                </Routes>
+
+            </div>
+        </Router>
     );
 }
 
